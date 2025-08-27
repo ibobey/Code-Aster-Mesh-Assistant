@@ -1,4 +1,5 @@
-﻿using Code_Aster_Mesh_Assistant.Entity.Node;
+﻿using Code_Aster_Mesh_Assistant.Entity;
+using Code_Aster_Mesh_Assistant.Entity.Node;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,12 +14,12 @@ namespace Code_Aster_Mesh_Assistant.Mesh
     {
         #region Fields
         private string _FilePath;
-        private List<Node> _nodes = new();
+        private List<Node> _Nodes = new();
         #endregion
 
         #region Properties
         public string FilePath { get => this._FilePath; }
-        public List<Node> Nodes { get => this._nodes; }
+        public List<Node> Nodes { get => this._Nodes; }
         #endregion
 
 
@@ -40,7 +41,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
 
         #region Node & Element Reader
 
-        public static (int Id, float X, float Y, float Z) GetNode(string node_)
+        private static (int Id, float X, float Y, float Z) GetNode(string node_)
         {
             try
             {
@@ -55,14 +56,59 @@ namespace Code_Aster_Mesh_Assistant.Mesh
             }
             catch (System.FormatException)
             {
-                throw new System.InvalidOperationException($"Invalid Format: '{node_}'");
+                throw new System.FormatException($"Invalid Format: '{node_}'");
             }
         }
 
         #endregion
 
         #region Mesh Reader
-        
+        private IEnumerable<(string Block, string Data)> ReadDataFromFile()
+        {
+            using var reader = new StreamReader(this._FilePath, encoding: Encoding.ASCII);
+            bool capture = false;
+            string? line;
+            string currentBlock = "";
+
+            while ((line = reader.ReadLine()).Trim() != KeyWords.FIN)
+            {
+                line = line.Trim();
+
+                if (line.Length == 0) continue;
+
+                if (KeyWords.Keywords.Contains(line))
+                {
+                    capture = true;
+                    currentBlock = line;
+                }
+
+                if (line == KeyWords.FINSF) capture = false;
+
+                if (capture)
+                {
+                    if (currentBlock != line) yield return (Block: currentBlock, Data: line);
+                }
+            }
+        }
+
+        public bool GetAllDataFromFile()
+        {
+            foreach (var data in ReadDataFromFile())
+            {
+                if (data.Block == KeyWords.COOR_3D)
+                {
+                    try
+                    {
+                        (int Id, float X, float Y, float Z) nodeData = GetNode(data.Data);
+                        this._Nodes.Add(new Node(nodeData.Id, nodeData.X, nodeData.Y, nodeData.Z));
+                    }
+                    catch (System.FormatException) { continue; }
+                    catch { throw new Exception("Unknown Format Exception Occured!"); }
+                }
+            }
+
+            return true;
+        }
         #endregion
 
     }

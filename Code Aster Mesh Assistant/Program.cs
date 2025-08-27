@@ -11,8 +11,8 @@ namespace Code_Aster_Mesh_Assistant
             Env.Load();
             string filePath = Environment.GetEnvironmentVariable("FILE_PATH") ?? "";
             MeshReader reader = new MeshReader(filePath);
-            var data = MeshReader.GetNode("N1 -2.94243156 -4.24992688 4.24992688");
-            Console.WriteLine(data);
+            reader.GetAllDataFromFile();
+            Console.WriteLine(reader.Nodes.Count);
         }
     }
 }
