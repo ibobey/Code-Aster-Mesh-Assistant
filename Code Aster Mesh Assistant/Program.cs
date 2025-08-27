@@ -9,7 +9,6 @@ namespace Code_Aster_Mesh_Assistant
     {
         public static void Main(string[] args)
         {
-            
             Env.Load();
             string filePath = Environment.GetEnvironmentVariable("FILE_PATH") ?? "";
             MeshReader reader = new MeshReader(filePath);
@@ -18,8 +17,6 @@ namespace Code_Aster_Mesh_Assistant
             Console.WriteLine(reader.Quad4s.Count);
             Console.WriteLine(reader.Tria3s.Count);
             Console.WriteLine(reader.Seg2s.Count);
-
-
         }
     }
 }

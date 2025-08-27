@@ -1,5 +1,4 @@
-﻿using Code_Aster_Mesh_Assistant.Entity.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

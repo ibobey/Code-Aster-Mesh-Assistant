@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Aster_Mesh_Assistant.Entity.Interface
+namespace Code_Aster_Mesh_Assistant.Entity.Node
 {
     public interface INode
     {
