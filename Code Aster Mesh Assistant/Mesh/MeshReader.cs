@@ -16,15 +16,16 @@ namespace Code_Aster_Mesh_Assistant.Mesh
         #region Fields
         private string _FilePath;
         private List<Node> _Nodes = new();
-        private List<Quad4> _Quads = new();
+        private List<Quad4> _Quad4s = new();
+        private List<Tria3> _Tria3s = new();
         #endregion
 
         #region Properties
         public string FilePath { get => this._FilePath; }
         public List<Node> Nodes { get => this._Nodes; }
-        public List<Quad4> Quads { get => this._Quads; }
+        public List<Quad4> Quad4s { get => this._Quad4s; }
+        public List<Tria3> Tria3s { get => this._Tria3s; }
         #endregion
-
 
         #region Constructors
         public MeshReader(string filePath)
@@ -43,7 +44,6 @@ namespace Code_Aster_Mesh_Assistant.Mesh
         #endregion
 
         #region Node & Element Reader
-
         private static (int Id, float X, float Y, float Z) GetNode(string node_)
         {
             try
@@ -62,7 +62,6 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 throw new System.FormatException($"Invalid Format: '{node_}'");
             }
         }
-
         private static (int Id, int N1, int N2, int N3, int N4) GetQuadElement(string quad_)
         {
             quad_ = quad_.Replace("N", "");
@@ -72,6 +71,17 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 .Select(x => int.Parse(x, CultureInfo.InvariantCulture))
                 .ToList();
             var result = (Id: Convert.ToInt32(values[0]), N1: values[1], N2: values[2], N3: values[3], values[4]);
+            return result;
+        }
+        private static (int Id, int N1, int N2, int N3) GetTriaElement(string tria_)
+        {
+            tria_ = tria_.Replace("N", "");
+            tria_ = tria_.Replace("E", "");
+            var values = tria_
+                .Split((char[])null!, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => int.Parse(x, CultureInfo.InvariantCulture))
+                .ToList();
+            var result = (Id: Convert.ToInt32(values[0]), N1: values[1], N2: values[2], N3: values[3]);
             return result;
         }
         #endregion
@@ -127,7 +137,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                     try
                     {
                         (int Id, int N1, int N2, int N3, int N4) quadData = GetQuadElement(data.Data);
-                        this._Quads.Add(
+                        this._Quad4s.Add(
                             new Quad4(
                                     quadData.Id,
                                     this._Nodes[quadData.N1],
@@ -141,7 +151,22 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 }
 
                 /* Read TRIA3 Data*/
-
+                if (data.Block == KeyWords.TRIA3)
+                {
+                    try
+                    {
+                        (int Id, int N1, int N2, int N3) triaData = GetTriaElement(data.Data);
+                        this._Tria3s.Add(
+                            new Tria3(
+                                    triaData.Id,
+                                    this._Nodes[triaData.N1],
+                                    this._Nodes[triaData.N2],
+                                    this._Nodes[triaData.N3]
+                            ));
+                    }
+                    catch (System.FormatException) { continue; }
+                    catch { throw new Exception("Unknown Format Exception Occured!"); }
+                }
                 /* Read SEG2 Data */
             }
 

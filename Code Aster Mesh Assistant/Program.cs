@@ -15,7 +15,8 @@ namespace Code_Aster_Mesh_Assistant
             MeshReader reader = new MeshReader(filePath);
             reader.GetAllDataFromFile();
             Console.WriteLine(reader.Nodes.Count);
-            Console.WriteLine(reader.Quads.Count);
+            Console.WriteLine(reader.Quad4s.Count);
+            Console.WriteLine(reader.Tria3s.Count);
 
 
         }
