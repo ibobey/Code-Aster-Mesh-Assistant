@@ -18,6 +18,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
         private List<Node> _Nodes = new();
         private List<Quad4> _Quad4s = new();
         private List<Tria3> _Tria3s = new();
+        private List<Seg2> _Seg2s = new();
         #endregion
 
         #region Properties
@@ -25,6 +26,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
         public List<Node> Nodes { get => this._Nodes; }
         public List<Quad4> Quad4s { get => this._Quad4s; }
         public List<Tria3> Tria3s { get => this._Tria3s; }
+        public List<Seg2> Seg2s { get => this._Seg2s; }
         #endregion
 
         #region Constructors
@@ -62,7 +64,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 throw new System.FormatException($"Invalid Format: '{node_}'");
             }
         }
-        private static (int Id, int N1, int N2, int N3, int N4) GetQuadElement(string quad_)
+        private static (int Id, int N1, int N2, int N3, int N4) GetQuad4Element(string quad_)
         {
             quad_ = quad_.Replace("N", "");
             quad_ = quad_.Replace("E", "");
@@ -73,7 +75,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
             var result = (Id: Convert.ToInt32(values[0]), N1: values[1], N2: values[2], N3: values[3], values[4]);
             return result;
         }
-        private static (int Id, int N1, int N2, int N3) GetTriaElement(string tria_)
+        private static (int Id, int N1, int N2, int N3) GetTria3Element(string tria_)
         {
             tria_ = tria_.Replace("N", "");
             tria_ = tria_.Replace("E", "");
@@ -82,6 +84,17 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 .Select(x => int.Parse(x, CultureInfo.InvariantCulture))
                 .ToList();
             var result = (Id: Convert.ToInt32(values[0]), N1: values[1], N2: values[2], N3: values[3]);
+            return result;
+        }
+        private static (int Id, int N1, int N2) GetSeg2Element(string seg2_)
+        {
+            seg2_ = seg2_.Replace("N", "");
+            seg2_ = seg2_.Replace("E", "");
+            var values = seg2_
+                .Split((char[])null!, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => int.Parse(x, CultureInfo.InvariantCulture))
+                .ToList();
+            var result = (Id: Convert.ToInt32(values[0]), N1: values[1], N2: values[2]);
             return result;
         }
         #endregion
@@ -114,7 +127,6 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 }
             }
         }
-
         public bool GetAllDataFromFile()
         {
             foreach (var data in ReadDataFromFile())
@@ -136,7 +148,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 {
                     try
                     {
-                        (int Id, int N1, int N2, int N3, int N4) quadData = GetQuadElement(data.Data);
+                        (int Id, int N1, int N2, int N3, int N4) quadData = GetQuad4Element(data.Data);
                         this._Quad4s.Add(
                             new Quad4(
                                     quadData.Id,
@@ -155,7 +167,7 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                 {
                     try
                     {
-                        (int Id, int N1, int N2, int N3) triaData = GetTriaElement(data.Data);
+                        (int Id, int N1, int N2, int N3) triaData = GetTria3Element(data.Data);
                         this._Tria3s.Add(
                             new Tria3(
                                     triaData.Id,
@@ -168,6 +180,21 @@ namespace Code_Aster_Mesh_Assistant.Mesh
                     catch { throw new Exception("Unknown Format Exception Occured!"); }
                 }
                 /* Read SEG2 Data */
+                if (data.Block == KeyWords.SEG2)
+                {
+                    try
+                    {
+                        (int Id, int N1, int N2) segData = GetSeg2Element(data.Data);
+                        this._Seg2s.Add(
+                            new Seg2(
+                                    segData.Id,
+                                    this._Nodes[segData.N1],
+                                    this._Nodes[segData.N2]
+                            ));
+                    }
+                    catch (System.FormatException) { continue; }
+                    catch { throw new Exception("Unknown Format Exception Occured!"); }
+                }
             }
 
             return true;

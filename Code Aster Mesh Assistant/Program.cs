@@ -17,6 +17,7 @@ namespace Code_Aster_Mesh_Assistant
             Console.WriteLine(reader.Nodes.Count);
             Console.WriteLine(reader.Quad4s.Count);
             Console.WriteLine(reader.Tria3s.Count);
+            Console.WriteLine(reader.Seg2s.Count);
 
 
         }
