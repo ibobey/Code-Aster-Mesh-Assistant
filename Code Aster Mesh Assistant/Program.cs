@@ -1,4 +1,6 @@
-﻿using Code_Aster_Mesh_Assistant.Entity;
+﻿using Code_Aster_Mesh_Assistant.Entity.Node;
+using Code_Aster_Mesh_Assistant.Mesh;
+using DotNetEnv;
 
 namespace Code_Aster_Mesh_Assistant
 {
@@ -6,9 +8,11 @@ namespace Code_Aster_Mesh_Assistant
     {
         public static void Main(string[] args)
         {
-            Node node = new Node(Id: 1, X: 1.1f, Y: 1.2f, Z: 1.3f);
-            Console.WriteLine(node.Coor_3D);
-            
+            Env.Load();
+            string filePath = Environment.GetEnvironmentVariable("FILE_PATH") ?? "";
+            Console.WriteLine($"FILE_PATH: {filePath}");
+            MeshReader reader = new MeshReader(filePath);
+            Console.WriteLine("Test");
         }
     }
 }

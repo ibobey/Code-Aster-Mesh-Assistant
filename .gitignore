@@ -8,6 +8,8 @@
 .vs/
 # Build results
 
+.env
+
 [Dd]ebug/
 [Rr]elease/
 x64/
