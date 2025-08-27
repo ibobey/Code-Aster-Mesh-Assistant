@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Code_Aster_Mesh_Assistant.Entity.Interface
 {
-    internal interface INode
+    public interface INode
     {
         public int Id { get; }
         public float X { get; }
