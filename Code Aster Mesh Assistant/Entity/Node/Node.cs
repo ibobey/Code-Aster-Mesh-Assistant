@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Aster_Mesh_Assistant.Entity
+namespace Code_Aster_Mesh_Assistant.Entity.Node
 {
     public class Node : INode
     {
@@ -18,20 +18,20 @@ namespace Code_Aster_Mesh_Assistant.Entity
         #endregion
 
         #region Properties
-        public int Id { get => this._Id; }
-        public float X { get => this._X; }
-        public float Y { get => this._Y; }
-        public float Z { get => this._Z; }
-        public (float X, float Y, float Z) Coor_3D { get => (X: this._X, Y: this._Y, Z: this._Z); }
+        public int Id { get => _Id; }
+        public float X { get => _X; }
+        public float Y { get => _Y; }
+        public float Z { get => _Z; }
+        public (float X, float Y, float Z) Coor_3D { get => (X: _X, Y: _Y, Z: _Z); }
         #endregion
 
         #region Constructors
         public Node(int Id, float X, float Y, float Z)
         {
-            this._Id = Id;
-            this._X = X;
-            this._Y = Y;
-            this._Z = Z;
+            _Id = Id;
+            _X = X;
+            _Y = Y;
+            _Z = Z;
         }
         #endregion
     }
