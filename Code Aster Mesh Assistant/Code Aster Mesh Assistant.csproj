@@ -16,8 +16,5 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Entity\Interface\" />
-	</ItemGroup>
 
 </Project>

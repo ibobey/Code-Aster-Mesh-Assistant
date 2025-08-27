@@ -1,4 +1,5 @@
-﻿using Code_Aster_Mesh_Assistant.Entity.Elements;
+﻿using Code_Aster_Mesh_Assistant.Calculator;
+using Code_Aster_Mesh_Assistant.Entity.Elements;
 using Code_Aster_Mesh_Assistant.Entity.Node;
 using Code_Aster_Mesh_Assistant.Mesh;
 using DotNetEnv;
@@ -17,6 +18,10 @@ namespace Code_Aster_Mesh_Assistant
             Console.WriteLine(reader.Quad4s.Count);
             Console.WriteLine(reader.Tria3s.Count);
             Console.WriteLine(reader.Seg2s.Count);
+
+            TriangleCalculator tria3Calculator = new TriangleCalculator(tria3s_: reader.Tria3s);
+            tria3Calculator.CalculateTriangleAreas();
+            Console.WriteLine(tria3Calculator.Areas.Count);
         }
     }
 }
