@@ -22,6 +22,7 @@ namespace Code_Aster_Mesh_Assistant
             Console.WriteLine(reader.Seg2s.Count);
             */
 
+            /*
             TriangleCalculator tria3Calculator = new TriangleCalculator(tria3s_: reader.Tria3s);
             tria3Calculator.CalculateTriangleAreas();
             Console.WriteLine(tria3Calculator.Areas.Average());
@@ -31,7 +32,14 @@ namespace Code_Aster_Mesh_Assistant
 
             tria3Calculator.CalculateAngleQualities();
             Console.WriteLine(tria3Calculator.AngleQualities.Average());
+            */
 
+            QuadCalculator quadCalculator = new QuadCalculator(reader.Quad4s);
+            quadCalculator.CalculateQuadAreas();
+            Console.WriteLine(quadCalculator.Areas.Count);
+            Console.WriteLine(quadCalculator.Areas.Average());
+            Console.WriteLine(quadCalculator.Areas.Max());
+            Console.WriteLine(quadCalculator.Areas.Min());
         }
     }
 }
