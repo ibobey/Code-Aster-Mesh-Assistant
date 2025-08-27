@@ -10,9 +10,9 @@ namespace Code_Aster_Mesh_Assistant
         {
             Env.Load();
             string filePath = Environment.GetEnvironmentVariable("FILE_PATH") ?? "";
-            Console.WriteLine($"FILE_PATH: {filePath}");
             MeshReader reader = new MeshReader(filePath);
-            Console.WriteLine("Test");
+            var data = MeshReader.GetNode("N1 -2.94243156 -4.24992688 4.24992688");
+            Console.WriteLine(data);
         }
     }
 }
