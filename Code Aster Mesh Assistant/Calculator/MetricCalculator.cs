@@ -1,4 +1,5 @@
 ﻿using Code_Aster_Mesh_Assistant.Calculator.Elements;
+using Code_Aster_Mesh_Assistant.Entity;
 using Code_Aster_Mesh_Assistant.Entity.Elements;
 using Code_Aster_Mesh_Assistant.Mesh;
 using System;
@@ -15,14 +16,16 @@ namespace Code_Aster_Mesh_Assistant.Calculator
         MeshReader _meshReader;
         TriangleCalculator? _tria3Calculator;
         QuadCalculator? _quad4Calculator;
-        Dictionary<string, double> _metricData = new();
+        Dictionary<string, MetricData> _metricData = new();
+        MeshData _meshData = new();
         #endregion
 
         #region Properties
         public List<Quad4> Quad4s { get => this._meshReader.Quad4s; }
         public List<Tria3> Tria3s { get => this._meshReader.Tria3s; }
         public List<Seg2> Seg2s { get => this._meshReader.Seg2s; }
-        public Dictionary<string, double> MetricData { get => this._metricData; }
+        public Dictionary<string, MetricData> MetricData { get => this._metricData; }
+        public MeshData MeshData { get => this._meshData; }
         #endregion
 
         #region Constructors
@@ -40,12 +43,14 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             this._tria3Calculator = new TriangleCalculator(tria3s_: this._meshReader.Tria3s);
             this._quad4Calculator = new QuadCalculator(quad4s_: this._meshReader.Quad4s);
 
-            this._metricData["Node"] = this._meshReader.Nodes.Count;
-            this._metricData["Quad4"] = this._meshReader.Quad4s.Count;
-            this._metricData["Tria3"] = this._meshReader.Tria3s.Count;
-            this._metricData["Seg2"] = this._meshReader.Seg2s.Count;
-            this._metricData["Total"] = this._meshReader.Seg2s.Count + this._meshReader.Quad4s.Count + this._meshReader.Tria3s.Count;
+            this._meshData = new MeshData
+            {
+                Node = this._meshReader.Nodes.Count,
+                Seg2 = this._meshReader.Seg2s.Count,
+                Tria3 = this._meshReader.Tria3s.Count,
+                Quad4 = this._meshReader.Quad4s.Count
 
+            };
             return true;
         }
         #endregion
@@ -53,58 +58,69 @@ namespace Code_Aster_Mesh_Assistant.Calculator
         #region Calculate All
         public bool CalculateAll()
         {
-            /* TRIA3*/
             this._tria3Calculator.CalculateAll();
-            this._metricData["Tria3_Area_Min"] = this._tria3Calculator.Areas.Min();
-            this._metricData["Tria3_Area_Max"] = this._tria3Calculator.Areas.Max();
-            this._metricData["Tria3_Area_Avg"] = this._tria3Calculator.Areas.Average();
-            this._metricData["Tria3_Area_Sum"] = this._tria3Calculator.Areas.Sum();
-
-            this._metricData["Tria3_EQ_Min"] = this._tria3Calculator.ElementQualities.Min();
-            this._metricData["Tria3_EQ_Max"] = this._tria3Calculator.ElementQualities.Max();
-            this._metricData["Tria3_EQ_Avg"] = this._tria3Calculator.ElementQualities.Average();
-
-            this._metricData["Tria3_AQ_Min"] = this._tria3Calculator.AngleQualities.Min();
-            this._metricData["Tria3_AQ_Max"] = this._tria3Calculator.AngleQualities.Max();
-            this._metricData["Tria3_AQ_Avg"] = this._tria3Calculator.AngleQualities.Average();
-
-            /* QUAD4 */
             this._quad4Calculator.CalculateAll();
-            this._metricData["Quad4_Area_Min"] = this._quad4Calculator.Areas.Min();
-            this._metricData["Quad4_Area_Max"] = this._quad4Calculator.Areas.Max();
-            this._metricData["Quad4_Area_Avg"] = this._quad4Calculator.Areas.Average();
-            this._metricData["Quad4_Area_Sum"] = this._quad4Calculator.Areas.Sum();
 
-            this._metricData["Quad4_EQ_Min"] = this._quad4Calculator.ElementQualities.Min();
-            this._metricData["Quad4_EQ_Max"] = this._quad4Calculator.ElementQualities.Max();
-            this._metricData["Quad4_EQ_Avg"] = this._quad4Calculator.ElementQualities.Average();
+            MetricData tria3MetricData = new MetricData
+            {
+                ElementName = KeyWords.TRIA3,
+                TotalElementCount = this._meshReader.Tria3s.Count,
 
-            this._metricData["Quad4_AQ_Min"] = this._quad4Calculator.AngleQualities.Min();
-            this._metricData["Quad4_AQ_Max"] = this._quad4Calculator.AngleQualities.Max();
-            this._metricData["Quad4_AQ_Avg"] = this._quad4Calculator.AngleQualities.Average();
+                Area = (Min: this._tria3Calculator.Areas.Min(),
+                        Max: this._tria3Calculator.Areas.Max(),
+                        Avg: this._tria3Calculator.Areas.Average(),
+                        Sum: this._tria3Calculator.Areas.Sum()),
 
-            /* Total */
+                Eq = (Min: this._tria3Calculator.ElementQualities.Min(),
+                      Max: this._tria3Calculator.ElementQualities.Max(),
+                      Avg: this._tria3Calculator.ElementQualities.Average()),
 
-            this._metricData["T_Area_Min"] = Math.Max(this._metricData["Quad4_Area_Min"], this._metricData["Tria3_Area_Min"]);
-            this._metricData["T_Area_Max"] = Math.Max(this._metricData["Quad4_Area_Max"], this._metricData["Tria3_Area_Max"]);
-            this._metricData["T_Area_Avg"] = CalculateMean(
-                this._metricData["Quad4_Area_Avg"], this.Quad4s.Count,
-                this._metricData["Tria3_Area_Avg"], this.Tria3s.Count);
-            this._metricData["T_Area_Total"] = this._metricData["Quad4_Area_Sum"] + this._metricData["Tria3_Area_Sum"];
+                Aq = (Min: this._tria3Calculator.AngleQualities.Min(),
+                      Max: this._tria3Calculator.AngleQualities.Max(),
+                      Avg: this._tria3Calculator.AngleQualities.Average())
+            };
 
+            this._metricData[KeyWords.TRIA3] = tria3MetricData;
 
-            this._metricData["T_EQ_Min"] = Math.Max(this._metricData["Quad4_EQ_Min"], this._metricData["Tria3_EQ_Min"]);
-            this._metricData["T_EQ_Max"] = Math.Max(this._metricData["Quad4_EQ_Max"], this._metricData["Tria3_EQ_Max"]);
-            this._metricData["T_EQ_Avg"] = CalculateMean(
-                this._metricData["Quad4_EQ_Avg"], this.Quad4s.Count,
-                this._metricData["Tria3_EQ_Avg"], this.Tria3s.Count);
+            MetricData quad4MetricData = new MetricData
+            {
+                ElementName = KeyWords.QUAD4,
+                TotalElementCount = this._meshReader.Quad4s.Count,
 
+                Area = (Min: this._quad4Calculator.Areas.Min(),
+                        Max: this._quad4Calculator.Areas.Max(),
+                        Avg: this._quad4Calculator.Areas.Average(),
+                        Sum: this._quad4Calculator.Areas.Sum()),
 
-            this._metricData["T_AQ_Min"] = Math.Max(this._metricData["Quad4_AQ_Min"], this._metricData["Tria3_AQ_Min"]);
-            this._metricData["T_AQ_Max"] = Math.Max(this._metricData["Quad4_AQ_Max"], this._metricData["Tria3_AQ_Max"]);
-            this._metricData["T_AQ_Avg"] = CalculateMean(
-                this._metricData["Quad4_AQ_Avg"], this.Quad4s.Count,
-                this._metricData["Tria3_AQ_Avg"], this.Tria3s.Count);
+                Eq = (Min: this._quad4Calculator.ElementQualities.Min(),
+                      Max: this._quad4Calculator.ElementQualities.Max(),
+                      Avg: this._quad4Calculator.ElementQualities.Average()),
+
+                Aq = (Min: this._quad4Calculator.AngleQualities.Min(),
+                      Max: this._quad4Calculator.AngleQualities.Max(),
+                      Avg: this._quad4Calculator.AngleQualities.Average())
+            };
+            this._metricData[KeyWords.QUAD4] = quad4MetricData;
+
+            MetricData totalMetricData = new MetricData
+            {
+                ElementName = KeyWords.TOTAL,
+                TotalElementCount = this._meshReader.Quad4s.Count,
+
+                Area = (Min: Math.Min(quad4MetricData.Area.Min, tria3MetricData.Area.Min),
+                        Max: Math.Max(quad4MetricData.Area.Max, tria3MetricData.Area.Max),
+                        Avg: CalculateMean(quad4MetricData.Area.Avg, this.Quad4s.Count, tria3MetricData.Area.Avg, this.Tria3s.Count),
+                        Sum: quad4MetricData.Area.Sum + tria3MetricData.Area.Sum),
+
+                Eq = (Min: Math.Min(quad4MetricData.Eq.Min, tria3MetricData.Eq.Min),
+                      Max: Math.Max(quad4MetricData.Eq.Max, tria3MetricData.Eq.Max),
+                      Avg: CalculateMean(quad4MetricData.Eq.Avg, this.Quad4s.Count, tria3MetricData.Eq.Avg, this.Tria3s.Count)),
+
+                Aq = (Min: Math.Min(quad4MetricData.Aq.Min, tria3MetricData.Aq.Min),
+                      Max: Math.Max(quad4MetricData.Aq.Max, tria3MetricData.Aq.Max),
+                      Avg: CalculateMean(quad4MetricData.Aq.Avg, this.Quad4s.Count, tria3MetricData.Aq.Avg, this.Tria3s.Count))
+            };
+            this._metricData[KeyWords.TOTAL] = totalMetricData;
 
             return true;
         }

@@ -22,12 +22,9 @@ namespace Code_Aster_Mesh_Assistant
             MetricCalculator calculator = new MetricCalculator(meshReader_: reader);
             calculator.CalculateAll();
             sw.Stop();
-
-
-            foreach (var key in calculator.MetricData) Console.WriteLine($"{key.Key} : {Math.Round(key.Value, 4)}");
-
-            Console.WriteLine($"Süre: {sw.Elapsed.TotalSeconds} s");
-            Console.WriteLine($"Hassas ölçüm: {sw.Elapsed.TotalMilliseconds} ms");
+            
+            Console.WriteLine(calculator.MeshData.Total);
+            foreach (var data in calculator.MetricData) Console.WriteLine($"{data.Key}{data.Value}");
         }
     }
 }

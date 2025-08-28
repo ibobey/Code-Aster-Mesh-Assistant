@@ -17,6 +17,7 @@ namespace Code_Aster_Mesh_Assistant.Entity
         public const string FIN = "FIN";
         public const string FEM_ANALYZER = "FemAnalyzer";
         public const string SEG2 = "SEG2";
+        public const string TOTAL = "TOTAL";
 
         public static readonly HashSet<string> Keywords = new() { TITRE, COOR_3D, QUAD4, TRIA3, SEG2 };
     }
