@@ -10,36 +10,70 @@ namespace Code_Aster_Mesh_Assistant
     {
         public static void Main(string[] args)
         {
+
+            CalculateAll();
+        }
+
+        public static void CalculateAll()
+        {
             Env.Load();
             string filePath = Environment.GetEnvironmentVariable("FILE_PATH") ?? "";
             MeshReader reader = new MeshReader(filePath);
             reader.GetAllDataFromFile();
-            
-            /*
-            Console.WriteLine(reader.Nodes.Count);
-            Console.WriteLine(reader.Quad4s.Count);
-            Console.WriteLine(reader.Tria3s.Count);
-            Console.WriteLine(reader.Seg2s.Count);
-            */
 
-            /*
+            Console.WriteLine("<--- * General Data * --->\n");
+
+            Console.WriteLine($"Nodes: {reader.Nodes.Count}");
+            Console.WriteLine($"Quad4s: {reader.Quad4s.Count}");
+            Console.WriteLine($"Tria3s: {reader.Tria3s.Count}");
+            Console.WriteLine($"Seg2s: {reader.Seg2s.Count}");
+            Console.WriteLine($"Total: {reader.Seg2s.Count + reader.Tria3s.Count + reader.Quad4s.Count}");
+            Console.WriteLine("");
+
+            Console.WriteLine("<--- * Triangle Data * --->\n");
+
             TriangleCalculator tria3Calculator = new TriangleCalculator(tria3s_: reader.Tria3s);
             tria3Calculator.CalculateTriangleAreas();
-            Console.WriteLine(tria3Calculator.Areas.Average());
+            Console.WriteLine($"Tria3 Area Min: {tria3Calculator.Areas.Min()}");
+            Console.WriteLine($"Tria3 Area Max: {tria3Calculator.Areas.Max()}");
+            Console.WriteLine($"Tria3 Area Avg: {tria3Calculator.Areas.Average()}");
+            Console.WriteLine($"Tria3 Area Sum: {tria3Calculator.Areas.Sum()}");
 
             tria3Calculator.CalculateElementQualities();
-            Console.WriteLine(tria3Calculator.ElementQualities.Average());
+            Console.WriteLine($"Tria3 EQ Min: {tria3Calculator.ElementQualities.Min()}");
+            Console.WriteLine($"Tria3 EQ Max: {tria3Calculator.ElementQualities.Max()}");
+            Console.WriteLine($"Tria3 EQ Avg: {tria3Calculator.ElementQualities.Average()}");
 
             tria3Calculator.CalculateAngleQualities();
-            Console.WriteLine(tria3Calculator.AngleQualities.Average());
-            */
-
+            Console.WriteLine($"Tria3 AQ Min: {tria3Calculator.AngleQualities.Min()}");
+            Console.WriteLine($"Tria3 AQ Max: {tria3Calculator.AngleQualities.Max()}");
+            Console.WriteLine($"Tria3 AQ Avg: {tria3Calculator.AngleQualities.Average()}");
+            Console.WriteLine("");
+            
+            Console.WriteLine("<--- * Quad Data * --->\n");
+            
             QuadCalculator quadCalculator = new QuadCalculator(reader.Quad4s);
             quadCalculator.CalculateQuadAreas();
-            Console.WriteLine(quadCalculator.Areas.Count);
-            Console.WriteLine(quadCalculator.Areas.Average());
-            Console.WriteLine(quadCalculator.Areas.Max());
-            Console.WriteLine(quadCalculator.Areas.Min());
+            Console.WriteLine($"Quad4 Area Min: {quadCalculator.Areas.Min()}");
+            Console.WriteLine($"Quad4 Area Max: {quadCalculator.Areas.Max()}");
+            Console.WriteLine($"Quad4 Area Avg: {quadCalculator.Areas.Average()}");
+            Console.WriteLine($"Quad4 Area Sum: {quadCalculator.Areas.Sum()}");
+
+            quadCalculator.CalculateElementQualities();
+            Console.WriteLine($"Quad4 EQ Min: {quadCalculator.ElementQualities.Min()}");
+            Console.WriteLine($"Quad4 EQ Max: {quadCalculator.ElementQualities.Max()}");
+            Console.WriteLine($"Quad4 EQ Avg: {quadCalculator.ElementQualities.Average()}");
+
+            quadCalculator.CalculateAngleQualities();
+            Console.WriteLine($"Quad4 AQ Min: {quadCalculator.AngleQualities.Min()}");
+            Console.WriteLine($"Quad4 AQ Max: {quadCalculator.AngleQualities.Max()}");
+            Console.WriteLine($"Quad4 AQ Avg: {quadCalculator.AngleQualities.Average()}");
+
+            Console.WriteLine("<--- * All * --->\n");
+
+
+
+
         }
     }
 }
