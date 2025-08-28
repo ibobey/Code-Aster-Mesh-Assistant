@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Aster_Mesh_Assistant.Calculator
+namespace Code_Aster_Mesh_Assistant.Calculator.Elements
 {
-    public class TriangleCalculator
+    internal class TriangleCalculator
     {
         #region Fields
         private List<Tria3> _Tria3s = new();
@@ -18,10 +18,10 @@ namespace Code_Aster_Mesh_Assistant.Calculator
         #endregion
 
         #region Properties
-        public List<Tria3> Tria3s { get => this._Tria3s; }
-        public List<float> Areas { get => this._Areas; }
-        public List<float> ElementQualities { get => this._ElementQualities; }
-        public List<float> AngleQualities { get => this._AngleQualities; }
+        public List<Tria3> Tria3s { get => _Tria3s; }
+        public List<float> Areas { get => _Areas; }
+        public List<float> ElementQualities { get => _ElementQualities; }
+        public List<float> AngleQualities { get => _AngleQualities; }
         #endregion
 
         #region Constructors
@@ -47,12 +47,12 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             return area;
         }
 
-        public bool CalculateTriangleAreas()
+        private bool CalculateTriangleAreas()
         {
             foreach (Tria3 tria3 in _Tria3s)
             {
                 float area_ = CalculateTriangleArea(tria3);
-                this._Areas.Add(area_);
+                _Areas.Add(area_);
             }
             return true;
         }
@@ -75,15 +75,15 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             Vector3 AC = C - A;
             float area = 0.5f * Vector3.Cross(AB, AC).Length();
 
-            float Q = (4.0f * MathF.Sqrt(3.0f) * area) / (a * a + b * b + c * c);
+            float Q = 4.0f * MathF.Sqrt(3.0f) * area / (a * a + b * b + c * c);
             return Q;
         }
-        public bool CalculateElementQualities()
+        private bool CalculateElementQualities()
         {
-            foreach (Tria3 tria3 in this._Tria3s)
+            foreach (Tria3 tria3 in _Tria3s)
             {
                 float eq_ = CalculateElementQuality(tria3);
-                this._ElementQualities.Add(eq_);
+                _ElementQualities.Add(eq_);
             }
 
             return true;
@@ -117,13 +117,23 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             return 1.0f - skewness;
         }
         
-        public bool CalculateAngleQualities()
+        private bool CalculateAngleQualities()
         {
-            foreach (Tria3 tria3 in this._Tria3s)
+            foreach (Tria3 tria3 in _Tria3s)
             {
                 float aq_ = CalculateAngleQuality(tria3);
-                this._AngleQualities.Add(aq_);
+                _AngleQualities.Add(aq_);
             }
+            return true;
+        }
+        #endregion
+
+        #region Calculate All
+        public bool CalculateAll()
+        {
+            CalculateTriangleAreas();
+            CalculateElementQualities();
+            CalculateAngleQualities();
             return true;
         }
         #endregion

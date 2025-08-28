@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code_Aster_Mesh_Assistant.Calculator
+namespace Code_Aster_Mesh_Assistant.Calculator.Elements
 {
-    public class QuadCalculator
+    internal class QuadCalculator
     {
         #region Fields
         private List<Quad4> _Quad4s = new();
@@ -18,16 +18,16 @@ namespace Code_Aster_Mesh_Assistant.Calculator
         #endregion
 
         #region Properties
-        public List<Quad4> Tria3s { get => this._Quad4s; }
-        public List<float> Areas { get => this._Areas; }
-        public List<float> ElementQualities { get => this._ElementQualities; }
-        public List<float> AngleQualities { get => this._AngleQualities; }
+        public List<Quad4> Tria3s { get => _Quad4s; }
+        public List<float> Areas { get => _Areas; }
+        public List<float> ElementQualities { get => _ElementQualities; }
+        public List<float> AngleQualities { get => _AngleQualities; }
         #endregion
 
         #region Constructors
         public QuadCalculator(List<Quad4> quad4s_)
         {
-            this._Quad4s = quad4s_;
+            _Quad4s = quad4s_;
         }
         #endregion
 
@@ -47,12 +47,12 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             return 0.5f * (area_AC + area_BD);
         }
 
-        public bool CalculateQuadAreas()
+        private bool CalculateQuadAreas()
         {
-            foreach (Quad4 quad in this._Quad4s)
+            foreach (Quad4 quad in _Quad4s)
             {
                 float area_ = CalculateQuadArea(quad);
-                this._Areas.Add(area_);
+                _Areas.Add(area_);
             }
             return true;
         }
@@ -61,12 +61,12 @@ namespace Code_Aster_Mesh_Assistant.Calculator
 
         #region Element Quality
 
-        public bool CalculateElementQualities()
+        private bool CalculateElementQualities()
         {
-            foreach (Quad4 quad in this._Quad4s)
+            foreach (Quad4 quad in _Quad4s)
             {
                 float data = CalculateElementQuality(quad);
-                this._ElementQualities.Add(data);
+                _ElementQualities.Add(data);
             }
             return true;
         }
@@ -97,7 +97,7 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             float area = Math.Max(area1, area2);
 
             // ANSYS'teki formül: Element Quality ≈ 4*A / sum(l_i^2)  (square için 1)
-            float q = (4f * area) / sumLen2;
+            float q = 4f * area / sumLen2;
 
             // [0,1] aralığına sıkıştır
             if (q < 0f) q = 0f;
@@ -148,13 +148,23 @@ namespace Code_Aster_Mesh_Assistant.Calculator
             return (float)Math.Clamp(1.0 - skew, 0.0, 1.0);
         }
 
-        public bool CalculateAngleQualities()
+        private bool CalculateAngleQualities()
         {
-            foreach (Quad4 quad in this._Quad4s)
+            foreach (Quad4 quad in _Quad4s)
             {
                 float data = CalculateAngleQuality(quad);
-                this._AngleQualities.Add(data);
+                _AngleQualities.Add(data);
             }
+            return true;
+        }
+        #endregion
+
+        #region Calculate All
+        public bool CalculateAll()
+        {
+            CalculateQuadAreas();
+            CalculateElementQualities();
+            CalculateAngleQualities();
             return true;
         }
         #endregion
